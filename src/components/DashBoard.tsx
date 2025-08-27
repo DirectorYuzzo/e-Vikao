@@ -216,7 +216,7 @@ const DashBoard = () => {
       >
         <GridItem>
           <MeetingCard
-            meeting={nextMeeting}
+            meeting={mockMeeting}
             onJoinMeeting={handleJoinMeeting}
             onViewAgenda={handleViewAgenda}
             isLoading={meetingsLoading}
@@ -238,7 +238,7 @@ const DashBoard = () => {
 
           <AgendaList
             title="Prioritized Agendas"
-            items={filteredAgendas}
+            items={filteredAgenda}
             isLoading={agendasLoading}
             onAddItem={handleAddAgendaItem}
             onToggleStatus={handleToggleStatus}

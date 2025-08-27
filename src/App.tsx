@@ -1,34 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import DashBoard from "./components/DashBoard";
-import { Box, Button, Container, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  useBreakpointValue,
+  Flex,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
 import Layout from "./components/Layout";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import MeetingCard from "./components/MeetingCard";
 import VikaoDashboard from "./solution/newDash";
+import { User } from "./types";
 
+const user: User = {
+  id: "2",
+  name: "Morgan",
+  email: "morgan@dev.com",
+  role: "admin",
+};
 const App = () => {
-  const user = {
-    name: "Morgan",
-    email: "morgan@dev.com",
-    role: "Admin",
-  };
-
   const handleMenuClick = (item: string) => {
     console.log("clicked: " + item);
   };
 
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const isMobile = useBreakpointValue({ base: true, lg: false });
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   return (
-    <Box>
-      <Flex>
-        <Sidebar user={user} onMenuClick={handleMenuClick} />
-        <Flex direction="column" flex={1}>
-          <Header title="Dashboard" user={user} />
-          <DashBoard />
-        </Flex>
+    <Flex>
+      {!isMobile && (
+        <Box
+          w={isSidebarCollapsed ? "70px" : "250px"}
+          transition="width 0.3s ease"
+          bg="white"
+          boxShadow="md"
+        >
+          <Sidebar
+            user={user}
+            isCollapsed={isSidebarCollapsed}
+            onToggle={toggleSidebar}
+          />
+        </Box>
+      )}
+      <Flex direction="column" flex={1}>
+        <Header title="Dashboard" user={user} />
+        <DashBoard />
       </Flex>
-      <VikaoDashboard />
-    </Box>
+    </Flex>
   );
 };
 

@@ -16,7 +16,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { Meeting } from "../types";
+import { Meeting } from "../../types";
 
 interface MeetingFormProps {
   onSubmit: (meeting: Omit<Meeting, "id">) => void;

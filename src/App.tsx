@@ -1,19 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import DashBoard from "./components/DashBoard";
-import {
-  Box,
-  Button,
-  Container,
-  useBreakpointValue,
-  Flex,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
-import Layout from "./components/Layout";
+import { Box, useBreakpointValue, Flex } from "@chakra-ui/react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
-import MeetingCard from "./components/MeetingCard";
-import VikaoDashboard from "./solution/newDash";
 import { User } from "./types";
 
 const user: User = {

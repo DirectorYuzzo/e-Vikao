@@ -8,15 +8,13 @@ import {
   useToast,
   useDisclosure,
 } from "@chakra-ui/react";
-import MeetingCard from "./dashboard/MeetingCard";
-import AgendaList, { AgendaItem } from "./dashboard/AgendaList";
 import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
-import StatsGrid from "./dashboard/StatsGrid";
-import MeetingModal from "./dashboard/MeetingModal";
+import MeetingModal from "../components/dashboard/MeetingModal";
 import { StatsData, Meeting } from "../types";
 import { useMeetings } from "../hooks/useMeetings";
 import { useAgendaItems } from "../hooks/useAgendaItems";
+import StatsGrid from "../components/dashboard/StatsGrid";
 
 const mockMeeting = {
   id: "1",
@@ -27,33 +25,6 @@ const mockMeeting = {
   description:
     "Review of Q2 performance metrics, budget allocation for Q3, and strategic planing for upcoming Projet ",
 };
-
-const mockAgendas: AgendaItem[] = [
-  {
-    id: "1",
-    title: "Budget Review",
-    description: "kickoff meeting for new client Project",
-    status: "pending" as const,
-    priority: "high" as const,
-    dueDate: "Today",
-  },
-  {
-    id: "2",
-    title: "Project kickoff",
-    description: "kickoff meeting for new client Project",
-    status: "in-progress" as const,
-    priority: "medium" as const,
-    dueDate: "Tomorrow",
-  },
-  {
-    id: "3",
-    title: "Policy update",
-    description: "Update company remote work policies",
-    status: "pending" as const,
-    priority: "low" as const,
-    dueDate: "Next week",
-  },
-];
 
 const mockStats: StatsData = {
   totalMeetings: 24,
@@ -119,20 +90,8 @@ const DashBoard = () => {
     }
   }, [meetingsError, agendasError, toast]);
 
-  //filter by priority
-  const filteredAgenda = showHighPriorityOnly
-    ? mockAgendas.filter((item) => item.priority === "high")
-    : mockAgendas;
-
   const handleJoinMeeting = () => {
     alert("Joining meetin...");
-  };
-
-  const handleViewAgenda = () => {
-    alert("show agenda...");
-  };
-  const handleAddAgendaItem = () => {
-    alert("Add new Agenda Item...");
   };
 
   const handleToggleStatus = async (id: string) => {
@@ -141,11 +100,6 @@ const DashBoard = () => {
     } catch (error) {
       // Error is already handled by the hook and shown via toast
     }
-  };
-
-  const handleViewDetails = (id: string) => {
-    const item = agendas.find((item) => item.id === id);
-    alert(`Viewing details for: ${item?.title}`);
   };
 
   const handleCreateMeeting = async (meetingData: typeof emptyMeeting) => {
@@ -160,10 +114,6 @@ const DashBoard = () => {
       // Error is already handled by the hook
     }
   };
-
-  const filteredAgendas = showHighPriorityOnly
-    ? prioritizedItems.filter((item) => item.priority === "high")
-    : prioritizedItems;
 
   return (
     <Box p={6}>
@@ -187,39 +137,7 @@ const DashBoard = () => {
         templateColumns={{ base: "1fr", lg: "2fr 1fr" }}
         gap={6}
         alignItems="start"
-      >
-        <GridItem>
-          <MeetingCard
-            meeting={mockMeeting}
-            onJoinMeeting={handleJoinMeeting}
-            onViewAgenda={handleViewAgenda}
-            isLoading={meetingsLoading}
-          />
-        </GridItem>
-
-        <GridItem>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setShowHighPriorityOnly(!showHighPriorityOnly)}
-            mb={4}
-            width="full"
-          >
-            {showHighPriorityOnly
-              ? "Show All Items"
-              : "Show High Priority Only"}
-          </Button>
-
-          <AgendaList
-            title="Prioritized Agendas"
-            items={filteredAgenda}
-            isLoading={agendasLoading}
-            onAddItem={handleAddAgendaItem}
-            onToggleStatus={handleToggleStatus}
-            onViewDetails={handleViewDetails}
-          />
-        </GridItem>
-      </Grid>
+      ></Grid>
       {/* Meeting Creation Modal */}
       <MeetingModal
         isOpen={isOpen}

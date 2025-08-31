@@ -47,7 +47,7 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
   ];
 
   return (
-    <Flex direction="column" w="250px" bg={bg} h="100vh" p={4}>
+    <Flex direction="column" h="100%" w="250px" bg={bg} p={4}>
       <Box mb={6} textAlign="center">
         <Image src="/logo.png" alt="e-Vikao Logo" maxW="160px" mx="auto" />
       </Box>
@@ -72,14 +72,8 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
         ))}
       </VStack>
 
-      <Box
-        textAlign="center"
-        mt={4}
-        pt={4}
-        borderTop="1px"
-        borderColor={hoverBg}
-      >
-        <Box p={4} textAlign="center" fontSize="sm" color={textColor}>
+      <Box textAlign="center" pt={4} borderTop="1px" borderColor={hoverBg}>
+        <Box mt="auto" p={4} textAlign="center" fontSize="sm" color={textColor}>
           &copy; {new Date().getFullYear()} e-Vikao. Managed by Director Yuzzo.
         </Box>
       </Box>
@@ -108,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px">e-Vikao</DrawerHeader>
-          <DrawerBody p={0} bg={bg}>
+          <DrawerBody p={0} overflowY="auto" bg={bg}>
             <SidebarContent onClose={onClose} />
           </DrawerBody>
         </DrawerContent>

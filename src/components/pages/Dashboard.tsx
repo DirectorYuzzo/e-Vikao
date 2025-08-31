@@ -81,7 +81,6 @@ const Dashboard = () => {
 
   const nextMeeting = upcomingMeetings.length > 0 ? upcomingMeetings[0] : null;
 
-  // Show errors if any occur
   if (meetingsError) {
     toast({
       title: "Meetings Error",

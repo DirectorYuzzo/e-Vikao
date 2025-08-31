@@ -1,4 +1,16 @@
-import { Box, VStack, Text } from "@chakra-ui/react";
+import React from "react";
+import {
+  Box,
+  VStack,
+  Text,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import {
   FiHome,
   FiVideo,
@@ -8,15 +20,28 @@ import {
   FiSettings,
 } from "react-icons/fi";
 import { NavLink, useLocation } from "react-router-dom";
-import { useColorModeValue } from "@chakra-ui/react";
 
-const Sidebar = () => {
+type SidebarProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
   const location = useLocation();
   const bg = useColorModeValue("gray.100", "gray.800");
   const hoverBg = useColorModeValue("gray.200", "gray.700");
   const activeBg = useColorModeValue("blue.100", "blue.900");
 
   const isActive = (path: string) => location.pathname === path;
+
+  const links = [
+    { to: "/", label: "Dashboard", icon: FiHome },
+    { to: "/meetings", label: "Meetings", icon: FiVideo },
+    { to: "/agendas", label: "Agendas", icon: FiList },
+    { to: "/calendar", label: "Calendar", icon: FiCalendar },
+    { to: "/reports", label: "Reports", icon: FiBarChart2 },
+    { to: "/settings", label: "Settings", icon: FiSettings },
+  ];
 
   return (
     <Box w="250px" bg={bg} h="100vh" p={4}>
@@ -25,90 +50,57 @@ const Sidebar = () => {
       </Text>
 
       <VStack spacing={2} align="stretch">
-        <Box
-          as={NavLink}
-          to="/"
-          p={3}
-          borderRadius="md"
-          bg={isActive("/") ? activeBg : "transparent"}
-          _hover={{ bg: hoverBg }}
-          textDecoration="none"
-          color="inherit"
-          end
-        >
-          <FiHome style={{ display: "inline", marginRight: "12px" }} />
-          Dashboard
-        </Box>
-
-        <Box
-          as={NavLink}
-          to="/meetings"
-          p={3}
-          borderRadius="md"
-          bg={isActive("/meetings") ? activeBg : "transparent"}
-          _hover={{ bg: hoverBg }}
-          textDecoration="none"
-          color="inherit"
-        >
-          <FiVideo style={{ display: "inline", marginRight: "12px" }} />
-          Meetings
-        </Box>
-
-        <Box
-          as={NavLink}
-          to="/agendas"
-          p={3}
-          borderRadius="md"
-          bg={isActive("/agendas") ? activeBg : "transparent"}
-          _hover={{ bg: hoverBg }}
-          textDecoration="none"
-          color="inherit"
-        >
-          <FiList style={{ display: "inline", marginRight: "12px" }} />
-          Agendas
-        </Box>
-
-        <Box
-          as={NavLink}
-          to="/calendar"
-          p={3}
-          borderRadius="md"
-          bg={isActive("/calendar") ? activeBg : "transparent"}
-          _hover={{ bg: hoverBg }}
-          textDecoration="none"
-          color="inherit"
-        >
-          <FiCalendar style={{ display: "inline", marginRight: "12px" }} />
-          Calendar
-        </Box>
-        <Box
-          as={NavLink}
-          to="/reports"
-          p={3}
-          borderRadius="md"
-          bg={isActive("/reports") ? activeBg : "transparent"}
-          _hover={{ bg: hoverBg }}
-          textDecoration="none"
-          color="inherit"
-        >
-          <FiBarChart2 style={{ display: "inline", marginRight: "12px" }} />
-          Reports
-        </Box>
-        <Box
-          as={NavLink}
-          to="/settings"
-          p={3}
-          borderRadius="md"
-          bg={isActive("/settings") ? activeBg : "transparent"}
-          _hover={{ bg: hoverBg }}
-          textDecoration="none"
-          color="inherit"
-        >
-          <FiSettings style={{ display: "inline", marginRight: "12px" }} />
-          Settings
-        </Box>
+        {links.map(({ to, label, icon: Icon }) => (
+          <Box
+            as={NavLink}
+            key={to}
+            to={to}
+            p={3}
+            borderRadius="md"
+            bg={isActive(to) ? activeBg : "transparent"}
+            _hover={{ bg: hoverBg }}
+            textDecoration="none"
+            color="inherit"
+            onClick={() => onClose?.()}
+          >
+            <Icon style={{ display: "inline", marginRight: "12px" }} />
+            {label}
+          </Box>
+        ))}
       </VStack>
     </Box>
+  );
+};
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+  const bg = useColorModeValue("gray.100", "gray.800");
+
+  return (
+    <>
+      {/* Desktop fixed sidebar */}
+      <Box
+        display={{ base: "none", md: "block" }}
+        position="fixed"
+        left={0}
+        top={0}
+        h="100vh"
+        zIndex={20}
+      >
+        <SidebarContent onClose={onClose} />
+      </Box>
+
+      {/* Mobile Drawer */}
+      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader borderBottomWidth="1px">e-Vikao</DrawerHeader>
+          <DrawerBody p={0} bg={bg}>
+            <SidebarContent onClose={onClose} />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 };
 

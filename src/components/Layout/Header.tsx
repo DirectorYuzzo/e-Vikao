@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Flex,
@@ -12,18 +13,23 @@ import {
 } from "@chakra-ui/react";
 import {
   FiMenu,
+  FiX,
   FiSun,
   FiMoon,
   FiLogOut,
   FiUser,
   FiSettings,
 } from "react-icons/fi";
-// import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 
-const Header = () => {
+type HeaderProps = {
+  onToggle: () => void;
+  isSidebarOpen: boolean;
+};
+
+const Header: React.FC<HeaderProps> = ({ onToggle, isSidebarOpen }) => {
   const { isDark, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -43,15 +49,20 @@ const Header = () => {
       boxShadow="sm"
       borderBottomWidth="1px"
       borderColor={borderColor}
+      position="sticky"
+      top={0}
+      zIndex={10}
     >
       <Flex justify="space-between" align="center">
         <Flex align="center">
+          {/* mobile toggle button */}
           <IconButton
-            aria-label="Menu"
-            icon={<FiMenu />}
+            aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
+            icon={isSidebarOpen ? <FiX /> : <FiMenu />}
             variant="ghost"
-            display={{ md: "none" }}
+            display={{ base: "inline-flex", md: "none" }}
             mr={2}
+            onClick={onToggle}
           />
           <Text fontSize="xl" fontWeight="bold">
             Dashboard

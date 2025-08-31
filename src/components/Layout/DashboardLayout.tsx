@@ -1,22 +1,19 @@
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex, Box, useDisclosure } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-// import Sidebar from "./Sidebar";
 import Header from "./Header";
-import Sidebar from "./sidebar";
+import Sidebar from "./Sidebar";
 
 const DashboardLayout = () => {
+  const { isOpen, onOpen, onClose, onToggle } = useDisclosure();
+
   return (
     <Flex minH="100vh">
-      {/* Sidebar */}
-      <Box display={{ base: "none", md: "block" }}>
-        <Sidebar />
-      </Box>
+      <Sidebar isOpen={isOpen} onClose={onClose} />
 
-      {/* Main content */}
-      <Box flex="1">
-        <Header />
+      <Box flex="1" ml={{ base: 0, md: "250px" }}>
+        <Header onToggle={onToggle} isSidebarOpen={isOpen} />
         <Box as="main" p={4}>
-          <Outlet /> {/* This renders our page content */}
+          <Outlet />
         </Box>
       </Box>
     </Flex>

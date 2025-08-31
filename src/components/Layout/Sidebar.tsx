@@ -1,3 +1,4 @@
+import { Flex, Image } from "@chakra-ui/react";
 import React from "react";
 import {
   Box,
@@ -45,10 +46,17 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
 
   return (
     <Box w="250px" bg={bg} h="100vh" p={4}>
-      <Text fontSize="xl" fontWeight="bold" mb={6}>
-        e-Vikao
-      </Text>
-
+      <Flex>
+        <Box mb={6} textAlign="left">
+          <Image
+            src="/logo.png"
+            color="red"
+            alt="e-Vikao Logo"
+            maxW="160px"
+            mx="auto"
+          />
+        </Box>
+      </Flex>
       <VStack spacing={2} align="stretch">
         {links.map(({ to, label, icon: Icon }) => (
           <Box

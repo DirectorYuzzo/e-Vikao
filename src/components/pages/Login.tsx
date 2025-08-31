@@ -7,11 +7,17 @@ import {
   Input,
   Button,
   useToast,
+  Image,
   VStack,
   Card,
   CardBody,
   Text,
   useColorModeValue,
+  Accordion,
+  AccordionIcon,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -62,6 +68,17 @@ const Login = () => {
         <CardBody p={8}>
           <VStack spacing={6}>
             <Box textAlign="center">
+              <Box mb={1} textAlign="left">
+                <Image
+                  src="/evikaoLogo.png"
+                  color="red"
+                  borderRadius="full"
+                  alt="e-Vikao Logo"
+                  maxH="100px"
+                  maxW="160px"
+                  mx="auto"
+                />
+              </Box>
               <Heading as="h1" size="xl" color="blue.600" mb={2}>
                 e-Vikao
               </Heading>

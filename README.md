@@ -1,4 +1,4 @@
-# e-Vikao Dashbpard
+# e-Vikao Dashboard
 
 e-Vikao is a meeting web app that helps organization to to customize and show and display meeting.
 

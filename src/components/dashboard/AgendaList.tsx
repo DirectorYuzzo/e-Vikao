@@ -85,10 +85,6 @@ const AgendaList: React.FC<AgendaListProps> = ({
                 key={item.id}
                 item={item}
                 onToggleStatus={onToggleStatus}
-                // onEdit={() => {
-                //   /* Will implement later */
-                // }}
-                // onDelete={() => onDeleteItem?.(item.id)}
               />
             ))}
           </VStack>

@@ -3,19 +3,25 @@ import {
   Button,
   FormControl,
   FormLabel,
+  FormErrorMessage,
   Input,
   Textarea,
+  Select,
   VStack,
   HStack,
+  Tag,
+  TagLabel,
+  TagCloseButton,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CreateMeetingDTO } from "../../types";
 
 interface MeetingFormProps {
   onSubmit: (meeting: CreateMeetingDTO) => void;
   onCancel: () => void;
-  initialData?: CreateMeetingDTO;
+  initialData?: Partial<CreateMeetingDTO>;
 }
 
 const MeetingForm: React.FC<MeetingFormProps> = ({
@@ -23,33 +29,38 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
   onCancel,
   initialData,
 }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("09:00");
-  const [participants, setParticipants] = useState<string[]>([]);
-  const [newParticipant, setNewParticipant] = useState("");
   const toast = useToast();
+  const [title, setTitle] = useState(initialData?.title || "");
+  const [description, setDescription] = useState(
+    initialData?.description || ""
+  );
+  const [date, setDate] = useState(initialData?.date || "");
+  const [time, setTime] = useState(initialData?.time || "09:00");
+  const [participantEmail, setParticipantEmail] = useState("");
+  const [participants, setParticipants] = useState<string[]>(
+    initialData?.participants || []
+  );
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Pre-fill form if editing
-  useEffect(() => {
-    if (initialData) {
-      setTitle(initialData.title);
-      setDescription(initialData.description);
-      setDate(initialData.date);
-      setTime(initialData.time);
-      setParticipants(initialData.participants);
-    }
-  }, [initialData]);
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!title.trim()) newErrors.title = "Title is required";
+    if (!date) newErrors.date = "Date is required";
+    if (!time) newErrors.time = "Time is required";
+    if (participants.length === 0)
+      newErrors.participants = "At least one participant is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleAddParticipant = () => {
-    if (
-      newParticipant.trim() &&
-      !participants.includes(newParticipant.trim())
-    ) {
-      setParticipants([...participants, newParticipant.trim()]);
-      setNewParticipant("");
-    } else if (participants.includes(newParticipant.trim())) {
+    const email = participantEmail.trim();
+    if (email && !participants.includes(email)) {
+      setParticipants([...participants, email]);
+      setParticipantEmail("");
+    } else if (participants.includes(email)) {
       toast({
         title: "Participant already added",
         status: "warning",
@@ -58,21 +69,14 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
     }
   };
 
-  const handleRemoveParticipant = (participant: string) => {
-    setParticipants(participants.filter((p) => p !== participant));
+  const handleRemoveParticipant = (email: string) => {
+    setParticipants(participants.filter((p) => p !== email));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title.trim() || !date || !time || participants.length === 0) {
-      toast({
-        title: "Please fill all required fields",
-        status: "error",
-        duration: 3000,
-      });
-      return;
-    }
+    if (!validateForm()) return;
 
     onSubmit({
       title,
@@ -84,22 +88,40 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && newParticipant.trim()) {
+    if (e.key === "Enter" && participantEmail.trim()) {
       e.preventDefault();
       handleAddParticipant();
     }
   };
 
+  const generateTimeOptions = () => {
+    const options = [];
+    for (let hour = 8; hour <= 18; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const timeString = `${hour.toString().padStart(2, "0")}:${minute
+          .toString()
+          .padStart(2, "0")}`;
+        options.push(
+          <option key={timeString} value={timeString}>
+            {timeString}
+          </option>
+        );
+      }
+    }
+    return options;
+  };
+
   return (
     <Box as="form" onSubmit={handleSubmit}>
       <VStack spacing={4} align="stretch">
-        <FormControl isRequired>
+        <FormControl isInvalid={!!errors.title}>
           <FormLabel>Meeting Title</FormLabel>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter meeting title"
           />
+          <FormErrorMessage>{errors.title}</FormErrorMessage>
         </FormControl>
 
         <FormControl>
@@ -112,8 +134,8 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
           />
         </FormControl>
 
-        <HStack spacing={4}>
-          <FormControl isRequired>
+        <HStack spacing={4} align="start">
+          <FormControl isInvalid={!!errors.date}>
             <FormLabel>Date</FormLabel>
             <Input
               type="date"
@@ -121,24 +143,24 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
               onChange={(e) => setDate(e.target.value)}
               min={new Date().toISOString().split("T")[0]}
             />
+            <FormErrorMessage>{errors.date}</FormErrorMessage>
           </FormControl>
 
-          <FormControl isRequired>
+          <FormControl isInvalid={!!errors.time}>
             <FormLabel>Time</FormLabel>
-            <Input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-            />
+            <Select value={time} onChange={(e) => setTime(e.target.value)}>
+              {generateTimeOptions()}
+            </Select>
+            <FormErrorMessage>{errors.time}</FormErrorMessage>
           </FormControl>
         </HStack>
 
-        <FormControl isRequired>
+        <FormControl isInvalid={!!errors.participants}>
           <FormLabel>Participants</FormLabel>
           <HStack>
             <Input
-              value={newParticipant}
-              onChange={(e) => setNewParticipant(e.target.value)}
+              value={participantEmail}
+              onChange={(e) => setParticipantEmail(e.target.value)}
               placeholder="Enter participant email"
               type="email"
               onKeyPress={handleKeyPress}
@@ -146,36 +168,30 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
             <Button
               onClick={handleAddParticipant}
               colorScheme="blue"
-              isDisabled={!newParticipant.trim()}
+              isDisabled={!participantEmail.trim()}
             >
               Add
             </Button>
           </HStack>
+          <FormErrorMessage>{errors.participants}</FormErrorMessage>
 
           {participants.length > 0 && (
-            <Box mt={2}>
-              {participants.map((participant) => (
-                <Box
-                  key={participant}
-                  display="inline-block"
-                  bg="blue.100"
-                  borderRadius="md"
-                  px={2}
-                  py={1}
-                  mr={2}
-                  mb={2}
-                >
-                  {participant}
-                  <Button
-                    size="xs"
-                    ml={2}
-                    variant="ghost"
-                    onClick={() => handleRemoveParticipant(participant)}
+            <Box mt={3}>
+              <Flex wrap="wrap" gap={2}>
+                {participants.map((email) => (
+                  <Tag
+                    key={email}
+                    size="md"
+                    variant="subtle"
+                    colorScheme="blue"
                   >
-                    ×
-                  </Button>
-                </Box>
-              ))}
+                    <TagLabel>{email}</TagLabel>
+                    <TagCloseButton
+                      onClick={() => handleRemoveParticipant(email)}
+                    />
+                  </Tag>
+                ))}
+              </Flex>
             </Box>
           )}
         </FormControl>
@@ -185,7 +201,7 @@ const MeetingForm: React.FC<MeetingFormProps> = ({
             Cancel
           </Button>
           <Button type="submit" colorScheme="blue">
-            {initialData ? "Update Meeting" : "Create Meeting"}
+            Create Meeting
           </Button>
         </HStack>
       </VStack>

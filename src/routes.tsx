@@ -7,6 +7,8 @@ import Dashboard from "./components/pages/Dashboard";
 import Login from "./components/pages/Login";
 import Meetings from "./components/pages/Meeting";
 import NotFound from "./components/pages/NotFound";
+import Reports from "./components/pages/Reports";
+import Setting from "./components/pages/Setting";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +31,14 @@ export const router = createBrowserRouter([
       {
         path: "meetings",
         element: <Meetings />,
+      },
+      {
+        path: "settings",
+        element: <Setting />,
+      },
+      {
+        path: "reports",
+        element: <Reports />,
       },
       {
         path: "agendas",

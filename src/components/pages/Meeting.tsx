@@ -38,7 +38,6 @@ const Meetings = () => {
     error,
   } = useMeetings();
 
-  // Show errors if any occur
   if (error) {
     toast({
       title: "Error loading meetings",
@@ -48,7 +47,6 @@ const Meetings = () => {
     });
   }
 
-  // Filter meetings based on search and status
   const filteredMeetings = meetings.filter((meeting) => {
     const matchesSearch =
       meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -187,7 +185,6 @@ const Meetings = () => {
         </Select>
       </Flex>
 
-      {/* Meetings List */}
       {filteredMeetings.length === 0 && !loading ? (
         <Alert status="info" borderRadius="md">
           <AlertIcon />
@@ -204,12 +201,11 @@ const Meetings = () => {
         />
       )}
 
-      {/* Meeting Creation/Edit Modal */}
       <MeetingModal
         isOpen={isOpen}
         onClose={handleModalClose}
         onSave={editingMeeting ? handleEditMeeting : handleCreateMeeting}
-        initialData={editingMeeting}
+        // initialData={editingMeeting}
         isEditing={!!editingMeeting}
       />
     </Box>

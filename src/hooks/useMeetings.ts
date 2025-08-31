@@ -1,24 +1,17 @@
 import { useState, useEffect } from "react";
 import { Meeting, CreateMeetingDTO } from "../types";
 import { useLocalStorage } from "./useLocalStorage";
-import { useAuth } from "../contexts/AuthContext";
 
 export const useMeetings = () => {
   const [meetings, setMeetings] = useLocalStorage<Meeting[]>("meetings", []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
-  const [allMeetings, setAllMeetings] = useLocalStorage<
-    Record<string, Meeting[]>
-  >("meetings", {});
-
-  // Get meetings for current user
-  const userMeetings = user ? allMeetings[user.id] || [] : [];
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 500);
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -45,33 +38,26 @@ export const useMeetings = () => {
     }
   };
 
-  //   if (!user) throw new Error("User not authenticated");
+  const updateMeeting = async (id: string, updates: Partial<Meeting>) => {
+    try {
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-  //   try {
-  //     setLoading(true);
-  //     await new Promise((resolve) => setTimeout(resolve, 500));
-
-  //     const newMeeting: Meeting = {
-  //       ...meetingData,
-  //       id: Date.now().toString(),
-  //     };
-
-  //     setAllMeetings((prev) => ({
-  //       ...prev,
-  //       [user.id]: [newMeeting, ...(prev[user.id] || [])],
-  //     }));
-
-  //     setError(null);
-  //     return newMeeting;
-  //   } catch (err) {
-  //     const errorMessage =
-  //       err instanceof Error ? err.message : "Failed to create meeting";
-  //     setError(errorMessage);
-  //     throw new Error(errorMessage);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      const updatedMeeting = { ...updates, id } as Meeting;
+      setMeetings((prev) =>
+        prev.map((meeting) => (meeting.id === id ? updatedMeeting : meeting))
+      );
+      setError(null);
+      return updatedMeeting;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update meeting";
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const deleteMeeting = async (id: string) => {
     try {
@@ -90,31 +76,9 @@ export const useMeetings = () => {
     }
   };
 
-  const updateMeeting = async (id: string, updates: Partial<Meeting>) => {
-    try {
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      const updatedMeeting = { ...updates, id } as Meeting;
-      setMeetings((prev) =>
-        prev.map((meeting) => (meeting.id === id ? updatedMeeting : meeting))
-      );
-
-      setError(null);
-      return updatedMeeting;
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to update meeting";
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getUpcomingMeetings = () => {
     const now = new Date();
-    return userMeetings
+    return meetings
       .filter((meeting) => {
         const meetingDate = new Date(`${meeting.date}T${meeting.time}`);
         return meetingDate > now;
@@ -127,12 +91,12 @@ export const useMeetings = () => {
   };
 
   return {
-    meetings: userMeetings,
+    meetings,
     upcomingMeetings: getUpcomingMeetings(),
     loading,
     error,
     createMeeting,
-    // updateMeeting,
-    // deleteMeeting,
+    updateMeeting,
+    deleteMeeting,
   };
 };

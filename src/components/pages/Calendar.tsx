@@ -21,7 +21,6 @@ const CalendarView = () => {
   );
   const calendarBg = useColorModeValue("white", "gray.800");
 
-  // Convert meetings to calendar events
   const events: CalendarEvent[] = useMemo(() => {
     return meetings.map((meeting) => ({
       id: meeting.id,
@@ -29,7 +28,7 @@ const CalendarView = () => {
       start: new Date(`${meeting.date}T${meeting.time}`),
       end: new Date(
         new Date(`${meeting.date}T${meeting.time}`).getTime() + 60 * 60 * 1000
-      ), // 1 hour duration
+      ),
       allDay: false,
       resource: meeting,
     }));
@@ -37,7 +36,6 @@ const CalendarView = () => {
 
   const handleSelectEvent = (event: CalendarEvent) => {
     console.log("Selected event:", event);
-    // You could open a modal with event details here
   };
 
   const handleSelectSlot = (slotInfo: {
@@ -46,7 +44,6 @@ const CalendarView = () => {
     slots: Date[];
   }) => {
     console.log("Selected slot:", slotInfo);
-    // You could open a modal to create a new meeting here
   };
 
   return (
@@ -80,7 +77,7 @@ const CalendarView = () => {
           startAccessor="start"
           endAccessor="end"
           view={view}
-          //   onView={(newView) => setView(newView)}
+          onView={(newView: any) => setView(newView)}
           onSelectEvent={handleSelectEvent}
           onSelectSlot={handleSelectSlot}
           selectable

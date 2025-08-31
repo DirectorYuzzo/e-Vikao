@@ -1,5 +1,12 @@
 import { Box, VStack, Text } from "@chakra-ui/react";
-import { FiHome, FiVideo, FiList, FiCalendar } from "react-icons/fi";
+import {
+  FiHome,
+  FiVideo,
+  FiList,
+  FiCalendar,
+  FiBarChart2,
+  FiSettings,
+} from "react-icons/fi";
 import { NavLink, useLocation } from "react-router-dom";
 import { useColorModeValue } from "@chakra-ui/react";
 
@@ -73,6 +80,32 @@ const Sidebar = () => {
         >
           <FiCalendar style={{ display: "inline", marginRight: "12px" }} />
           Calendar
+        </Box>
+        <Box
+          as={NavLink}
+          to="/reports"
+          p={3}
+          borderRadius="md"
+          bg={isActive("/reports") ? activeBg : "transparent"}
+          _hover={{ bg: hoverBg }}
+          textDecoration="none"
+          color="inherit"
+        >
+          <FiBarChart2 style={{ display: "inline", marginRight: "12px" }} />
+          Reports
+        </Box>
+        <Box
+          as={NavLink}
+          to="/settings"
+          p={3}
+          borderRadius="md"
+          bg={isActive("/settings") ? activeBg : "transparent"}
+          _hover={{ bg: hoverBg }}
+          textDecoration="none"
+          color="inherit"
+        >
+          <FiSettings style={{ display: "inline", marginRight: "12px" }} />
+          Settings
         </Box>
       </VStack>
     </Box>

@@ -18,9 +18,10 @@ import {
   FiUser,
   FiSettings,
 } from "react-icons/fi";
-import { useTheme } from "../../contexts/ThemeContext";
+// import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const Header = () => {
   const { isDark, toggleTheme } = useTheme();

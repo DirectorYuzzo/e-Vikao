@@ -23,19 +23,19 @@ const MeetingListItem: React.FC<MeetingListItemProps> = ({
 }) => {
   const hoverBg = useColorModeValue("gray.50", "gray.700");
   const borderColor = useColorModeValue("gray.200", "gray.600");
+  const textColor = useColorModeValue("gray.700", "gray.200");
+  const subTextColor = useColorModeValue("gray.600", "gray.400");
 
   const formatDateTime = (date: string, time: string) => {
     const meetingDate = new Date(`${date}T${time}`);
     const now = new Date();
-    const isPast = meetingDate < now;
-
     return {
-      date: new Date(date).toLocaleDateString(),
-      time: new Date(`2000-01-01T${time}`).toLocaleTimeString([], {
+      date: meetingDate.toLocaleDateString(),
+      time: meetingDate.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       }),
-      isPast,
+      isPast: meetingDate < now,
     };
   };
 
@@ -51,37 +51,31 @@ const MeetingListItem: React.FC<MeetingListItemProps> = ({
     >
       <Flex justify="space-between" align="start">
         <Box flex="1">
-          {/* Header with title and status */}
           <Flex align="center" mb={2}>
-            <Text fontWeight="semibold" fontSize="lg" mr={3}>
+            <Text fontWeight="semibold" fontSize="lg" mr={3} color={textColor}>
               {meeting.title}
             </Text>
             <Badge colorScheme={isPast ? "gray" : "blue"}>
               {isPast ? "Past" : "Upcoming"}
             </Badge>
           </Flex>
-
-          {/* Description */}
-          <Text color="gray.600" mb={3} noOfLines={2}>
+          <Text color={subTextColor} mb={3} noOfLines={2}>
             {meeting.description}
           </Text>
-
-          {/* Metadata */}
-          <HStack spacing={4} color="gray.500" fontSize="sm">
+          <HStack spacing={4} color={subTextColor} fontSize="sm">
             <Flex align="center">
-              <FiClock style={{ marginRight: "4px" }} />
+              <FiClock style={{ marginRight: "4px" }} />{" "}
               <Text>
                 {time} • {date}
               </Text>
             </Flex>
             <Flex align="center">
-              <FiUsers style={{ marginRight: "4px" }} />
+              <FiUsers style={{ marginRight: "4px" }} />{" "}
               <Text>{meeting.participants.length} participants</Text>
             </Flex>
           </HStack>
         </Box>
 
-        {/* Actions */}
         <HStack spacing={2} ml={4}>
           <IconButton
             aria-label="Edit meeting"

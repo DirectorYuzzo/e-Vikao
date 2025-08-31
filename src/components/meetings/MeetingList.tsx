@@ -25,7 +25,7 @@ const MeetingList: React.FC<MeetingListProps> = ({
 }) => {
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
-  if (loading) {
+  if (loading)
     return (
       <VStack spacing={4} align="stretch">
         {[1, 2, 3, 4, 5].map((i) => (
@@ -33,23 +33,19 @@ const MeetingList: React.FC<MeetingListProps> = ({
         ))}
       </VStack>
     );
-  }
 
-  if (meetings.length === 0) {
+  if (meetings.length === 0)
     return (
       <Alert status="info" borderRadius="md">
         <AlertIcon />
         No meetings found. Create your first meeting to get started!
       </Alert>
     );
-  }
 
-  // Group meetings by date
+  // Group by date
   const groupedMeetings = meetings.reduce((acc, meeting) => {
     const date = meeting.date;
-    if (!acc[date]) {
-      acc[date] = [];
-    }
+    if (!acc[date]) acc[date] = [];
     acc[date].push(meeting);
     return acc;
   }, {} as Record<string, Meeting[]>);
@@ -60,7 +56,12 @@ const MeetingList: React.FC<MeetingListProps> = ({
     <VStack spacing={6} align="stretch">
       {sortedDates.map((date) => (
         <Box key={date}>
-          <Text fontWeight="bold" fontSize="lg" mb={3} color="gray.700">
+          <Text
+            fontWeight="bold"
+            fontSize="lg"
+            mb={3}
+            color={useColorModeValue("gray.700", "gray.200")}
+          >
             {new Date(date).toLocaleDateString("en-US", {
               weekday: "long",
               year: "numeric",

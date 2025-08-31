@@ -11,6 +11,7 @@ import {
   useDisclosure,
   Alert,
   AlertIcon,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FiPlus, FiSearch, FiFilter } from "react-icons/fi";
 import { useState } from "react";
@@ -28,6 +29,8 @@ const Meetings = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
+  const bg = useColorModeValue("gray.50", "gray.900");
+  const headingColor = useColorModeValue("gray.700", "gray.200");
 
   const {
     meetings,
@@ -51,7 +54,6 @@ const Meetings = () => {
     const matchesSearch =
       meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       meeting.description.toLowerCase().includes(searchTerm.toLowerCase());
-
     const now = new Date();
     const meetingDate = new Date(`${meeting.date}T${meeting.time}`);
     const matchesStatus =
@@ -60,13 +62,11 @@ const Meetings = () => {
         : statusFilter === "upcoming"
         ? meetingDate > now
         : meetingDate <= now;
-
     return matchesSearch && matchesStatus;
   });
 
   const handleEditMeeting = async (meetingData: CreateMeetingDTO) => {
     if (!editingMeeting) return;
-
     try {
       await updateMeeting(editingMeeting.id, meetingData);
       toast({
@@ -77,11 +77,9 @@ const Meetings = () => {
       setEditingMeeting(null);
       onClose();
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to update meeting";
       toast({
         title: "Error updating meeting",
-        description: errorMessage,
+        description: err instanceof Error ? err.message : "Failed",
         status: "error",
         duration: 3000,
       });
@@ -98,11 +96,9 @@ const Meetings = () => {
           duration: 3000,
         });
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to delete meeting";
         toast({
           title: "Error deleting meeting",
-          description: errorMessage,
+          description: err instanceof Error ? err.message : "Failed",
           status: "error",
           duration: 3000,
         });
@@ -110,44 +106,10 @@ const Meetings = () => {
     }
   };
 
-  const handleEditClick = (meeting: Meeting) => {
-    setEditingMeeting(meeting);
-    onOpen();
-  };
-
-  const handleCreateMeeting = async (meetingData: CreateMeetingDTO) => {
-    try {
-      await createMeeting(meetingData);
-      toast({
-        title: "Meeting created successfully",
-        status: "success",
-        duration: 3000,
-      });
-      onClose();
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to create meeting";
-      toast({
-        title: "Error creating meeting",
-        description: errorMessage,
-        status: "error",
-        duration: 3000,
-      });
-    }
-  };
-
-  const handleModalClose = () => {
-    setEditingMeeting(null);
-    onClose();
-  };
-
   return (
-    <Box p={6}>
-      {/* Header */}
+    <Box p={6} bg={bg} minH="100vh">
       <Flex justify="space-between" align="center" mb={6}>
-        <Heading as="h1" size="xl" color="gray.700">
-          Meetings
-        </Heading>
+        <Heading color={headingColor}>Meetings</Heading>
         <Button
           leftIcon={<FiPlus />}
           colorScheme="blue"
@@ -158,7 +120,6 @@ const Meetings = () => {
         </Button>
       </Flex>
 
-      {/* Search and Filter Section */}
       <Flex gap={4} mb={6} direction={{ base: "column", md: "row" }}>
         <InputGroup maxW={{ md: "300px" }}>
           <InputLeftElement pointerEvents="none">
@@ -196,16 +157,18 @@ const Meetings = () => {
         <MeetingList
           meetings={filteredMeetings}
           loading={loading}
-          onEdit={handleEditClick}
+          onEdit={setEditingMeeting}
           onDelete={handleDeleteMeeting}
         />
       )}
 
       <MeetingModal
         isOpen={isOpen}
-        onClose={handleModalClose}
-        onSave={editingMeeting ? handleEditMeeting : handleCreateMeeting}
-        // initialData={editingMeeting}
+        onClose={() => {
+          setEditingMeeting(null);
+          onClose();
+        }}
+        onSave={editingMeeting ? handleEditMeeting : createMeeting}
         isEditing={!!editingMeeting}
       />
     </Box>

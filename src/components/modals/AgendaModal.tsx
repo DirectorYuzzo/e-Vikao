@@ -24,9 +24,7 @@ const AgendaModal: React.FC<AgendaModalProps> = ({
   initialData,
   isEditing = false,
 }) => {
-  const handleSubmit = (itemData: Omit<AgendaItem, "id">) => {
-    onSave(itemData);
-  };
+  const handleSubmit = (itemData: Omit<AgendaItem, "id">) => onSave(itemData);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">

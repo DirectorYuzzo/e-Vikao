@@ -24,9 +24,7 @@ const MeetingModal: React.FC<MeetingModalProps> = ({
   initialData,
   isEditing = false,
 }) => {
-  const handleSubmit = (meetingData: CreateMeetingDTO) => {
-    onSave(meetingData);
-  };
+  const handleSubmit = (meetingData: CreateMeetingDTO) => onSave(meetingData);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">

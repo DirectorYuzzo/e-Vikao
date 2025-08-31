@@ -13,11 +13,6 @@ import {
   CardBody,
   Text,
   useColorModeValue,
-  Accordion,
-  AccordionIcon,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -32,21 +27,20 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const bg = useColorModeValue("gray.50", "gray.900");
   const cardBg = useColorModeValue("white", "gray.800");
+  const headingColor = useColorModeValue("blue.600", "blue.300");
+  const textColor = useColorModeValue("gray.600", "gray.300");
+
   const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
       const success = await login({ email, password });
       if (success) {
-        toast({
-          title: "Login successful",
-          status: "success",
-          duration: 3000,
-        });
+        toast({ title: "Login successful", status: "success", duration: 3000 });
         navigate(from, { replace: true });
       }
     } catch (error) {
@@ -63,26 +57,20 @@ const Login = () => {
   };
 
   return (
-    <Flex minH="100vh" align="center" justify="center" bg="gray.50">
+    <Flex minH="100vh" align="center" justify="center" bg={bg}>
       <Card bg={cardBg} boxShadow="xl" borderRadius="lg" w="100%" maxW="md">
         <CardBody p={8}>
           <VStack spacing={6}>
             <Box textAlign="center">
-              <Box mb={1} textAlign="left">
-                <Image
-                  src="/evikaoLogo.png"
-                  color="red"
-                  borderRadius="full"
-                  alt="e-Vikao Logo"
-                  maxH="100px"
-                  maxW="160px"
-                  mx="auto"
-                />
-              </Box>
-              <Heading as="h1" size="xl" color="blue.600" mb={2}>
-                e-Vikao
-              </Heading>
-              <Text color="gray.600">Meeting Management Dashboard</Text>
+              <Image
+                src="/evikaoLogo.png"
+                alt="e-Vikao Logo"
+                maxH="100px"
+                mx="auto"
+                mb={2}
+              />
+              <Heading color={headingColor}>e-Vikao</Heading>
+              <Text color={textColor}>Meeting Management Dashboard</Text>
             </Box>
 
             <Box as="form" onSubmit={handleSubmit} w="100%">
@@ -119,8 +107,12 @@ const Login = () => {
               </VStack>
             </Box>
 
-            {/* Demo credentials */}
-            <Box bg="blue.50" p={4} borderRadius="md" w="100%">
+            <Box
+              bg={useColorModeValue("blue.50", "gray.700")}
+              p={4}
+              borderRadius="md"
+              w="100%"
+            >
               <Text fontSize="sm" fontWeight="bold" mb={2}>
                 Demo Credentials:
               </Text>

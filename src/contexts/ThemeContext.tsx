@@ -1,10 +1,5 @@
-import React, {
-  Children,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, useContext, ReactNode } from "react";
+import { useColorMode } from "@chakra-ui/react";
 
 interface ThemeContextType {
   isDark: boolean;
@@ -15,38 +10,18 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const useTheme = () => {
   const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must me used within ThemeProvider");
-  }
+  if (!context) throw new Error("useTheme must be used within ThemeProvider");
   return context;
 };
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isDark, setIsDark] = useState(false);
-
-  //Loading from the local storage
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      setIsDark(savedTheme === "dark");
-    }
-  }, []);
-
-  useEffect(() => {
-    // localStorage.setItem("theme", newTheme);
-
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDark]);
+  const { colorMode, toggleColorMode } = useColorMode();
+  const isDark = colorMode === "dark";
 
   const toggleTheme = () => {
-    setIsDark(!isDark);
+    toggleColorMode(); // Chakra handles dark/light mode + persistence
   };
 
   return (
@@ -55,5 +30,3 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     </ThemeContext.Provider>
   );
 };
-
-// export default ThemeContext;

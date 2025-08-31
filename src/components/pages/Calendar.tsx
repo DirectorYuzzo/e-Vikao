@@ -6,7 +6,13 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState, useMemo } from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import {
+  Calendar,
+  momentLocalizer,
+  Event as RBCEvent,
+  SlotInfo,
+  View,
+} from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useMeetings } from "../../hooks/useMeetings";
@@ -16,9 +22,9 @@ const localizer = momentLocalizer(moment);
 
 const CalendarView = () => {
   const { meetings } = useMeetings();
-  const [view, setView] = useState<"month" | "week" | "day" | "agenda">(
-    "month"
-  );
+  const [view, setView] = useState<View>("month");
+
+  const bg = useColorModeValue("gray.50", "gray.900");
   const calendarBg = useColorModeValue("white", "gray.800");
 
   const events: CalendarEvent[] = useMemo(() => {
@@ -34,28 +40,21 @@ const CalendarView = () => {
     }));
   }, [meetings]);
 
-  const handleSelectEvent = (event: CalendarEvent) => {
+  const handleSelectEvent = (event: CalendarEvent & RBCEvent) =>
     console.log("Selected event:", event);
-  };
-
-  const handleSelectSlot = (slotInfo: {
-    start: Date;
-    end: Date;
-    slots: Date[];
-  }) => {
+  const handleSelectSlot = (slotInfo: SlotInfo) =>
     console.log("Selected slot:", slotInfo);
-  };
 
   return (
-    <Box p={6}>
+    <Box p={6} bg={bg} minH="100vh">
       <Flex justify="space-between" align="center" mb={6}>
-        <Heading as="h1" size="xl" color="gray.700">
+        <Heading color={useColorModeValue("gray.700", "gray.200")}>
           Calendar
         </Heading>
         <Select
           width="200px"
           value={view}
-          onChange={(e) => setView(e.target.value as any)}
+          onChange={(e) => setView(e.target.value as View)}
         >
           <option value="month">Month</option>
           <option value="week">Week</option>
@@ -77,13 +76,13 @@ const CalendarView = () => {
           startAccessor="start"
           endAccessor="end"
           view={view}
-          onView={(newView: any) => setView(newView)}
+          onView={(newView: View) => setView(newView)}
           onSelectEvent={handleSelectEvent}
           onSelectSlot={handleSelectSlot}
           selectable
           popup
           style={{ height: "100%" }}
-          eventPropGetter={(event) => ({
+          eventPropGetter={() => ({
             style: {
               backgroundColor: "#3182CE",
               borderRadius: "4px",

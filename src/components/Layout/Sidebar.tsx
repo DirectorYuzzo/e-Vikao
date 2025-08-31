@@ -11,6 +11,7 @@ import {
   DrawerHeader,
   DrawerBody,
   useColorModeValue,
+  Spacer,
 } from "@chakra-ui/react";
 import {
   FiHome,
@@ -32,6 +33,7 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
   const bg = useColorModeValue("gray.100", "gray.800");
   const hoverBg = useColorModeValue("gray.200", "gray.700");
   const activeBg = useColorModeValue("blue.100", "blue.900");
+  const textColor = useColorModeValue("gray.600", "gray.400");
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -45,19 +47,12 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
   ];
 
   return (
-    <Box w="250px" bg={bg} h="100vh" p={4}>
-      <Flex>
-        <Box mb={6} textAlign="left">
-          <Image
-            src="/logo.png"
-            color="red"
-            alt="e-Vikao Logo"
-            maxW="160px"
-            mx="auto"
-          />
-        </Box>
-      </Flex>
-      <VStack spacing={2} align="stretch">
+    <Flex direction="column" w="250px" bg={bg} h="100vh" p={4}>
+      <Box mb={6} textAlign="center">
+        <Image src="/logo.png" alt="e-Vikao Logo" maxW="160px" mx="auto" />
+      </Box>
+
+      <VStack spacing={2} align="stretch" flex="1">
         {links.map(({ to, label, icon: Icon }) => (
           <Box
             as={NavLink}
@@ -76,7 +71,19 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
           </Box>
         ))}
       </VStack>
-    </Box>
+
+      <Box
+        textAlign="center"
+        mt={4}
+        pt={4}
+        borderTop="1px"
+        borderColor={hoverBg}
+      >
+        <Box p={4} textAlign="center" fontSize="sm" color={textColor}>
+          &copy; {new Date().getFullYear()} e-Vikao. Managed by Director Yuzzo.
+        </Box>
+      </Box>
+    </Flex>
   );
 };
 
@@ -85,7 +92,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Desktop fixed sidebar */}
       <Box
         display={{ base: "none", md: "block" }}
         position="fixed"
@@ -97,7 +103,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <SidebarContent onClose={onClose} />
       </Box>
 
-      {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
